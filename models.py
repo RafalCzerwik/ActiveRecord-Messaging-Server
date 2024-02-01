@@ -91,7 +91,7 @@ class Message:
         self._creation_date = None
 
     @property
-    def creation_date(self)
+    def creation_date(self):
         return self._creation_date
 
     @property

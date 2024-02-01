@@ -34,7 +34,7 @@ except OperationalError as e:
 
 try:
     cnx = connect(database="workshop_db", user=DB_USER, password=DB_PASSWORD, host=DB_HOST)
-    cnx.commit = True
+    cnx.autocommit = True
     cursor = cnx.cursor()
     try:
         cursor.execute(CREATE_USERS_TABLE)
