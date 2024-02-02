@@ -2,6 +2,13 @@ from clcrypto import hash_password
 
 
 class User:
+    """
+    User class representing a user in the system.
+
+    :param str username: user's username
+    :param str password: user's password
+    :param str salt: user's salt for password hashing
+    """
     def __init__(self, username="", password="", salt=""):
         self._id = -1
         self.username = username
@@ -23,6 +30,13 @@ class User:
         self.set_password(password)
 
     def save_to_db(self, cursor):
+        """
+        Saves user to the database.
+
+        :param psycopg2.extensions.cursor cursor: PostgreSQL database cursor
+
+        :rtype: bool
+        """
         if self._id == -1:
             sql = """INSERT INTO users(username, hashed_password)
                             VALUES(%s, %s) RETURNING id"""
@@ -38,6 +52,14 @@ class User:
 
     @staticmethod
     def load_user_by_username(cursor, username):
+        """
+        Loads user by username from the database.
+
+        :param psycopg2.extensions.cursor cursor: PostgreSQL database cursor
+        :param str username: username to load
+
+        :rtype: User
+        """
         sql = "SELECT id, username, hashed_password FROM userr WHERE username=%s"
         cursor.execute(sql, (username,))
         data = cursor.fetchone()
@@ -50,6 +72,14 @@ class User:
 
     @staticmethod
     def load_user_by_id(cursor):
+        """
+        Loads user by ID from the database.
+
+        :param psycopg2.extensions.cursor cursor: PostgreSQL database cursor
+        :param int id_: user ID to load
+
+        :rtype: User
+        """
         sql = "SELECT id, username, hashed_password FROM users WHERE id=%s"
         cursor.execute(sql, (id_))
         data = cursor.fetchone()
@@ -62,6 +92,13 @@ class User:
 
     @staticmethod
     def load_all_users(cursor):
+        """
+        Loads all users from the database.
+
+        :param psycopg2.extensions.cursor cursor: PostgreSQL database cursor
+
+        :rtype: list[User]
+        """
         sql = " SELECT id, username, hashed_password FROM users"
         users = []
         cursor.execute(sql)
@@ -74,8 +111,14 @@ class User:
             users.append(loaded_user)
         return users
 
-
     def delete(self, cursor):
+        """
+        Deletes user from the database.
+
+        :param psycopg2.extensions.cursor cursor: PostgreSQL database cursor
+
+        :rtype: bool
+        """
         sql = "DELETE FROM Users WHERE id=%s"
         cursor.execute(sql, (self.id,))
         self._id = -1
@@ -83,6 +126,13 @@ class User:
 
 
 class Message:
+    """
+    Message class representing a message in the system.
+
+    :param int from_id: sender's user ID
+    :param int to_id: recipient's user ID
+    :param str text: message text
+    """
     def __init__(self, from_id, to_id, text):
         self._id = -1
         self.from_id = from_id
@@ -100,6 +150,14 @@ class Message:
 
     @staticmethod
     def load_all_messages(cursor, user_id=None):
+        """
+        Loads all messages from the database.
+
+        :param psycopg2.extensions.cursor cursor: PostgreSQL database cursor
+        :param int user_id: user ID to filter messages (optional)
+
+        :rtype: list[Message]
+        """
         if user_id:
             sql = "SELECT id, from_id, to_id, text, creation_date FROM messages WHERE to_id=%s"
             cursor.execute(sql, (user_id,))
@@ -116,6 +174,13 @@ class Message:
             return messages
 
     def save_to_db(self, cursor):
+        """
+        Saves message to the database.
+
+        :param psycopg2.extensions.cursor cursor: PostgreSQL database cursor
+
+        :rtype: bool
+        """
         if self._id == -1:
             sql = """INSERT INTO Messages(from_id, to_id, text)
                             VALUES(%s, %s, %s) RETURNING id, creation_date"""

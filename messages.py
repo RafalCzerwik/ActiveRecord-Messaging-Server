@@ -16,6 +16,14 @@ args = parser.parse_args()
 
 
 def print_user_messages(cur, user):
+    """
+    Prints messages for a specific user.
+
+    :param psycopg2.extensions.cursor cur: PostgreSQL database cursor
+    :param User user: User object
+
+    :rtype: None
+    """
     messages = Message.load_all_messages(cur, user.id)
     for message in messages:
         from_ = User.load_user_by_id(cur, message.from_id)
@@ -27,6 +35,16 @@ def print_user_messages(cur, user):
 
 
 def send_message(cur, from_id, recipient_name, text):
+    """
+    Sends a message from one user to another.
+
+    :param psycopg2.extensions.cursor cur: PostgreSQL database cursor
+    :param int from_id: sender's user ID
+    :param str recipient_name: recipient's username
+    :param str text: message text
+
+    :rtype: None
+    """
     if len(text) > 255:
         print('Message is too long!')
         return
